@@ -207,7 +207,10 @@ var DEFAULT_INGS = [
   {id:'chervil',    name:'山蘿蔔葉',    cat:'香草', unit:'kg', ordLabel:'kg'},
   {id:'ylemon',     name:'黃檸檬',      cat:'柑橘', unit:'顆', ordLabel:'顆'},
   {id:'glemon',     name:'綠檸檬',      cat:'柑橘', unit:'顆', ordLabel:'顆'},
-  {id:'egg',        name:'雞蛋',        cat:'蛋類', unit:'盒', ordLabel:'盒', noLoss:true}
+  {id:'egg',        name:'雞蛋',        cat:'蛋類', unit:'盒', ordLabel:'盒', noLoss:true},
+  {id:'onion_str',  name:'洋蔥絲',      cat:'蔬菜', unit:'kg', ordLabel:'kg'},
+  {id:'carrot_dic', name:'紅蘿蔔丁',    cat:'蔬菜', unit:'kg', ordLabel:'kg'},
+  {id:'chick_liv',  name:'雞肝',        cat:'肉類', unit:'kg', ordLabel:'kg'}
 ];
 
 var INGS = [];
@@ -227,6 +230,14 @@ function load() {
     var e = localStorage.getItem('k4_qty');    if (e) ordQty = JSON.parse(e);
   } catch(err) {}
   if (!INGS || !INGS.length) INGS = JSON.parse(JSON.stringify(DEFAULT_INGS));
+  // 修補：把 DEFAULT_INGS 裡有但 localStorage 沒有的品項自動補入
+  for (var di = 0; di < DEFAULT_INGS.length; di++) {
+    var found = false;
+    for (var xi = 0; xi < INGS.length; xi++) {
+      if (INGS[xi].id === DEFAULT_INGS[di].id) { found = true; break; }
+    }
+    if (!found) INGS.push(JSON.parse(JSON.stringify(DEFAULT_INGS[di])));
+  }
   // 修補：確保雞蛋永遠有 noLoss 標記（相容舊 localStorage 資料）
   for (var ii = 0; ii < INGS.length; ii++) {
     if (INGS[ii].id === 'egg') INGS[ii].noLoss = true;
@@ -259,7 +270,7 @@ function cats() {
   return result;
 }
 function icon(c) {
-  var m = {蔬菜:'🥬', 香草:'🌿', 柑橘:'🍋', 蛋類:'🥚', 番茄:'🍅'};
+  var m = {蔬菜:'🥬', 香草:'🌿', 柑橘:'🍋', 蛋類:'🥚', 番茄:'🍅', 肉類:'🥩'};
   return m[c] || '🍱';
 }
 function fmtToday() {
